@@ -1,6 +1,0 @@
-@Module3WebApi.WebApi_HostAddress = http://localhost:5235
-
-GET {{Module3WebApi.WebApi_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
