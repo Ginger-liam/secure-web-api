@@ -7,55 +7,55 @@ namespace Module3WebApi.WebApi.Repositories
     public class Environment2DRepository
     {
         private readonly string sqlConnectionString;
+        //private readonly IAuthenticationService authenticationService;
 
         public Environment2DRepository(string sqlConnectionString)
         {
             this.sqlConnectionString = sqlConnectionString;
+            //this.authenticationService = authenticationService;
         }
 
-        public async Task<WeatherForecast> InsertAsync(WeatherForecast weatherForecast)
+        public async Task<Environment2D> InsertAsync(Environment2D environment2D)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
-                var environmentId = await sqlConnection.ExecuteAsync("INSERT INTO [WeatherForecast] (Id, TemperatureC, Summary) VALUES (@Id, @TemperatureC, @Summary)", weatherForecast);
-                return weatherForecast;
+                var environmentId = await sqlConnection.ExecuteAsync("INSERT INTO [Environment2D] (Id, Name, OwnerUserId, MaxLength, MaxHeight) VALUES (@Id, @Name, @OwnerUserId, @MaxLength, @MaxHeight)", environment2D);
+                return environment2D;
             }
         }
 
-        public async Task<WeatherForecast?> ReadAsync(Guid id)
+        public async Task<Environment2D?> ReadAsync(Guid id)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
-                return await sqlConnection.QuerySingleOrDefaultAsync<WeatherForecast>("SELECT * FROM [WeatherForecast] WHERE Id = @Id", new { id });
+                return await sqlConnection.QuerySingleOrDefaultAsync<Environment2D>("SELECT * FROM [Environment2D] WHERE Id = @Id", new { id });
             }
         }
-
-        public async Task<IEnumerable<WeatherForecast>> ReadAsync()
+        public async Task<IEnumerable<Environment2D>> ReadAsync()
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
-                return await sqlConnection.QueryAsync<WeatherForecast>("SELECT * FROM [WeatherForecast]");
+                return await sqlConnection.QueryAsync<Environment2D>("SELECT * FROM [Environment2D]");
             }
         }
-
-        public async Task UpdateAsync(WeatherForecast environment)
+        public async Task UpdateAsync(Environment2D environment2D)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
-                await sqlConnection.ExecuteAsync("UPDATE [WeatherForecast] SET " +
-                                                 "TemperatureC = @TemperatureC, " +
-                                                 "Summary = @Summary"
-                                                 , environment);
+                await sqlConnection.ExecuteAsync("UPDATE [Environment2D] SET " +
+                                                 "Name = @Name, " +
+                                                 "OwnerUserId = @OwnerUserId, " +
+                                                 "MaxLength = @MaxLength, " +
+                                                 "MaxHeight = @MaxHeight " +
+                                                 "WHERE Id = @Id", environment2D);
             }
         }
-
         public async Task DeleteAsync(Guid id)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
-                await sqlConnection.ExecuteAsync("DELETE FROM [WeatherForecast] WHERE Id = @Id", new { id });
+                await sqlConnection.ExecuteAsync("DELETE FROM [Environment2D] WHERE Id = @Id", new { id });
             }
         }
-
     }
 }
