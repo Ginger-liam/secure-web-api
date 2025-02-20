@@ -1,4 +1,5 @@
-﻿using Module3WebApi.WebApi.Repositories;
+﻿using Microsoft.AspNetCore.Identity;
+using Module3WebApi.WebApi.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 var sqlConnectionString = builder.Configuration["SqlConnectionString"];
@@ -16,6 +17,20 @@ builder.Services.AddOpenApi();
 builder.Services.AddTransient<WeatherForecastRepository, WeatherForecastRepository>(o => new WeatherForecastRepository(sqlConnectionString));
 builder.Services.AddTransient<Environment2DRepository, Environment2DRepository>(o => new Environment2DRepository(sqlConnectionString));
 
+builder.Services.AddAuthorization();
+
+builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
+{
+    options.User.RequireUniqueEmail = true;
+    options.Password.RequiredLength = 15;
+})
+.AddRoles<IdentityRole>()
+.AddDapperStores(options =>
+{
+    options.ConnectionString = sqlConnectionString;
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -29,6 +44,10 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseAuthorization();
+app.MapGroup("/account").MapIdentityApi<IdentityUser>(); 
+app.MapControllers().RequireAuthorization();
 
 app.MapGet("/", () => $"The API is up 🚀. Connection string found {(sqlConnectionStringFound ? "✅" : "❎")}");
 
