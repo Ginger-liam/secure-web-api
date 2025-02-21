@@ -57,9 +57,22 @@ public class Environment2DController : ControllerBase
         if (existingEnvironment2D == null)
             return NotFound();
 
-        await _environment2DRepository.UpdateAsync(newEnvironment2D);
+        // Update only the fields that changed
+        if (newEnvironment2D.Name != null && existingEnvironment2D.Name != newEnvironment2D.Name)
+            existingEnvironment2D.Name = newEnvironment2D.Name;
 
-        return Ok(newEnvironment2D);
+        if (newEnvironment2D.OwnerUserId != null && existingEnvironment2D.OwnerUserId != newEnvironment2D.OwnerUserId)
+            existingEnvironment2D.OwnerUserId = newEnvironment2D.OwnerUserId;
+
+        if (newEnvironment2D.MaxLength != 0 && existingEnvironment2D.MaxLength != newEnvironment2D.MaxLength)
+            existingEnvironment2D.MaxLength = newEnvironment2D.MaxLength;
+
+        if (newEnvironment2D.MaxHeight != 0 && existingEnvironment2D.MaxHeight != newEnvironment2D.MaxHeight)
+            existingEnvironment2D.MaxHeight = newEnvironment2D.MaxHeight;
+
+        await _environment2DRepository.UpdateAsync(existingEnvironment2D);
+
+        return Ok(existingEnvironment2D);
     }
 
     [HttpDelete("{environment2DId}", Name = "DeleteEnvironment2D")]

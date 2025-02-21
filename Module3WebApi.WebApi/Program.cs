@@ -17,6 +17,7 @@ builder.Services.AddTransient<IAuthenticationService, AspNetIdentityAuthenticati
 
 
 builder.Services.AddTransient<Environment2DRepository, Environment2DRepository>(o => new Environment2DRepository(sqlConnectionString));
+builder.Services.AddTransient<Object2DRepository, Object2DRepository>(o => new Object2DRepository(sqlConnectionString));
 
 builder.Services.AddAuthorization();
 
