@@ -31,11 +31,12 @@ namespace Module3WebApi.WebApi.Repositories
                 return await sqlConnection.QuerySingleOrDefaultAsync<Environment2D>("SELECT * FROM [Environment2D] WHERE Id = @Id", new { id });
             }
         }
-        public async Task<IEnumerable<Environment2D>> ReadAsync()
+        public async Task<IEnumerable<Environment2D>> ReadAsync(string userId)
         {
+            // Only return environments that belong to the logged in user
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
-                return await sqlConnection.QueryAsync<Environment2D>("SELECT * FROM [Environment2D]");
+                return await sqlConnection.QueryAsync<Environment2D>("SELECT * FROM [Environment2D] WHERE OwnerUserId = @userId", new { userId });
             }
         }
         public async Task UpdateAsync(Environment2D environment2D)

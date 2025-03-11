@@ -24,14 +24,15 @@ public class Environment2DController : ControllerBase
     [HttpGet(Name = "Read2DEnvironment")]
     public async Task<ActionResult<IEnumerable<Environment2D>>> Get()
     {
-        var environments = await _environment2DRepository.ReadAsync();
+        var userId = _authenticationService.GetCurrentAuthenticatedUserId();
+
+        var environments = await _environment2DRepository.ReadAsync(userId);
         return Ok(environments);
     }
 
     [HttpGet("{environment2DId}", Name = "ReadEnvironment2D")]
     public async Task<ActionResult<Environment2D>> Get(Guid environment2DId)
     {
-        Console.WriteLine(_authenticationService.GetCurrentAuthenticatedUserId());
         var environment2D = await _environment2DRepository.ReadAsync(environment2DId);
         if (environment2D == null)
             return NotFound();
@@ -42,10 +43,10 @@ public class Environment2DController : ControllerBase
     [HttpPost(Name = "CreateEnvironment2D")]
     public async Task<ActionResult> Add(Environment2D environment2D)
     {
-
         environment2D.Id = Guid.NewGuid();
+        environment2D.OwnerUserId = _authenticationService.GetCurrentAuthenticatedUserId();
 
-        var createdWeatherForecast = await _environment2DRepository.InsertAsync(environment2D);
+        await _environment2DRepository.InsertAsync(environment2D);
         return Created();
     }
 
