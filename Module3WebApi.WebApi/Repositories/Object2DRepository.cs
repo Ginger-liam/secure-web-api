@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Module3WebApi.WebApi.Repositories
 {
-   public class Object2DRepository
+   public class Object2DRepository : IObject2DRepository
    {
        private readonly string sqlConnectionString;
    

@@ -12,12 +12,12 @@ namespace Module3WebApi.WebApi.Controllers;
 [Route("Environment2D")]
 public class Environment2DController : ControllerBase
 {
-    private readonly Environment2DRepository _environment2DRepository;
+    private readonly IEnvironment2DRepository _environment2DRepository;
     private readonly IAuthenticationService _authenticationService;
-    private readonly Object2DRepository _object2DRepository;
+    private readonly IObject2DRepository _object2DRepository;
     private readonly ILogger<Environment2DController> _logger;
 
-    public Environment2DController(Environment2DRepository environment2DRepository, Object2DRepository object2DRepository, ILogger<Environment2DController> logger, IAuthenticationService authenticationService)
+    public Environment2DController(IEnvironment2DRepository environment2DRepository, IObject2DRepository object2DRepository, ILogger<Environment2DController> logger, IAuthenticationService authenticationService)
     {
         _environment2DRepository = environment2DRepository;
         _object2DRepository = object2DRepository;
