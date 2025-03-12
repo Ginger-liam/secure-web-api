@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Module3WebApi.WebApi.Models;
 using Module3WebApi.WebApi.Repositories;
 using System;
+using Dapper;
+using Microsoft.Data.SqlClient;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Module3WebApi.WebApi.Controllers;
@@ -12,11 +14,13 @@ public class Environment2DController : ControllerBase
 {
     private readonly Environment2DRepository _environment2DRepository;
     private readonly IAuthenticationService _authenticationService;
+    private readonly Object2DRepository _object2DRepository;
     private readonly ILogger<Environment2DController> _logger;
 
-    public Environment2DController(Environment2DRepository environment2DRepository, ILogger<Environment2DController> logger, IAuthenticationService authenticationService)
+    public Environment2DController(Environment2DRepository environment2DRepository, Object2DRepository object2DRepository, ILogger<Environment2DController> logger, IAuthenticationService authenticationService)
     {
         _environment2DRepository = environment2DRepository;
+        _object2DRepository = object2DRepository;
         _authenticationService = authenticationService;
         _logger = logger;
     }
@@ -80,10 +84,19 @@ public class Environment2DController : ControllerBase
     public async Task<IActionResult> Delete(Guid environment2DId)
     {
         var existingEnvironment2D = await _environment2DRepository.ReadAsync(environment2DId);
-
+        
         if (existingEnvironment2D == null)
             return NotFound();
-
+        
+        // Delete all objects in the environment
+        var object2Ds = await _object2DRepository.ReadAllAsync(environment2DId);
+        foreach (var object2D in object2Ds)
+        {
+            Console.WriteLine("Deleting object2D: " + object2D.Id);
+            await _object2DRepository.DeleteAsync(object2D.Id);
+        }
+        
+        
         await _environment2DRepository.DeleteAsync(environment2DId);
 
         return Ok();
