@@ -47,8 +47,17 @@ public class Environment2DController : ControllerBase
     [HttpPost(Name = "CreateEnvironment2D")]
     public async Task<ActionResult> Add(Environment2D environment2D)
     {
+        var userId = _authenticationService.GetCurrentAuthenticatedUserId();
+        var environments = await _environment2DRepository.ReadAsync(userId);
+        if (environments.Count() >= 5)
+            return BadRequest("You can only create 5 environments");
+
+        var existingEnvironment = environments.FirstOrDefault(e => e.Name == environment2D.Name && e.OwnerUserId == userId);
+        if (existingEnvironment != null)
+            return BadRequest("You already have an environment with that name");
+        
         environment2D.Id = Guid.NewGuid();
-        environment2D.OwnerUserId = _authenticationService.GetCurrentAuthenticatedUserId();
+        environment2D.OwnerUserId = userId;
 
         await _environment2DRepository.InsertAsync(environment2D);
         return Created();
